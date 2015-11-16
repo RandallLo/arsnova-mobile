@@ -351,7 +351,7 @@ Ext.define('ARSnova.view.speaker.QuestionDetailsPanel', {
 							}
 
 							if (panel.questionObj.questionType === 'grid') {
-								panel.gridStatistic.setQuestionObj(question.raw);
+								panel.gridStatistic.setQuestionObj(panel.questionObj);
 								panel.gridStatistic.updateGrid();
 							}
 
@@ -419,6 +419,7 @@ Ext.define('ARSnova.view.speaker.QuestionDetailsPanel', {
 					var afterEdit = function () {
 						panel.contentForm.show();
 						panel.contentEditForm.hide();
+						panel.uploadView.hide();
 						panel.previewButton.hide();
 						panel.markdownEditPanel.hide();
 						panel.cancelButton.hide();
@@ -745,6 +746,7 @@ Ext.define('ARSnova.view.speaker.QuestionDetailsPanel', {
 
 		// Preview panel with integrated button
 		this.previewPart = Ext.create('Ext.form.FormPanel', {
+			hidden: this.isFlashcard,
 			cls: 'newQuestion',
 			scrollable: null,
 			items: [{
@@ -942,7 +944,7 @@ Ext.define('ARSnova.view.speaker.QuestionDetailsPanel', {
 
 		this.answerFormFieldset = Ext.create('Ext.form.FieldSet', {
 			cls: 'standardFieldset centerFormTitle',
-			title: this.questionObj.questionType !== "flashcard" ? Messages.ANSWERS : Messages.ANSWER
+			title: this.questionObj.questionType !== "flashcard" ? Messages.ANSWERS : Messages.FLASHCARD_BACK_PAGE
 		});
 
 		this.answerForm = Ext.create('Ext.form.FormPanel', {
@@ -1145,6 +1147,7 @@ Ext.define('ARSnova.view.speaker.QuestionDetailsPanel', {
 			if (this.questionObj.image === 'true') {
 				this.grid.prepareRemoteImage(this.questionObj._id, false, false, function (dataUrl) {
 					me.questionObj.image = dataUrl;
+					me.image = dataUrl;
 
 					if (isGridQuestion) {
 						prepareGridStatistic(me.questionObj);
@@ -1155,6 +1158,7 @@ Ext.define('ARSnova.view.speaker.QuestionDetailsPanel', {
 			} else if (isGridQuestion) {
 				prepareGridStatistic(me.questionObj);
 			} else {
+				this.image = this.questionObj.image;
 				this.grid.setImage(this.questionObj.image);
 				this.uploadView.toggleImagePresent();
 				this.grid.show();
